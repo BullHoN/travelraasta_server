@@ -3,6 +3,7 @@ const app = express();
 const path = require('path')
 const cors = require('cors');
 const mongoose = require('mongoose')
+const compression = require('compression')
 
 var admin = require("firebase-admin");
 
@@ -24,6 +25,9 @@ mongoose.connect('mongodb+srv://admin:Mw6smfISo3Ity3iC@travelraasta.nqh1c.mongod
 })
 
 // middlewares
+app.use(compression({
+    level: 6
+}))
 app.use(cors());
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -33,7 +37,9 @@ app.use(express.static('build'))
 app.use('/services',require('./services/serviceRoute'));
 app.use('/admin/register',require('./admin/registerAdmin'))
 
-
+app.get('/about',(req,res)=>{
+    res.sendFile(path.join(__dirname + '/pages/about.html'));
+})
 
 app.get('*',(req,res)=>{
     res.sendFile(path.join(__dirname + '/build/index.html'))
