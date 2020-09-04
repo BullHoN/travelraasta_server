@@ -37,10 +37,6 @@ app.use(express.static('build'))
 app.use('/services',require('./services/serviceRoute'));
 app.use('/admin/register',require('./admin/registerAdmin'))
 
-app.get('/about',(req,res)=>{
-    res.sendFile(path.join(__dirname + '/pages/about.html'));
-})
-
 app.get('*',(req,res)=>{
     res.sendFile(path.join(__dirname + '/build/index.html'))
 })
