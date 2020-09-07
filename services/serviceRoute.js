@@ -3,6 +3,17 @@ const route = express.Router();
 const ServiceNotification = require('../models/ServiceNotification');
 var admin = require("firebase-admin");
 const AdminUser = require('../models/adminUser')
+const limitter = require('express-rate-limit');
+
+
+const serviceLimiter = limitter({
+    windowMs: 5*10*1000,
+    max: 3,
+    message:{
+        message: "Too Many Request",
+        status: false
+    }
+})
 
 let authToken = "asknkasfnknieniffasasf";
 
@@ -50,7 +61,7 @@ route.get('/',(req,res)=>{
     }
 })
 
-route.post('/',async (req,res)=>{
+route.post('/',serviceLimiter,async (req,res)=>{
     
     let nwNoti = makeNotiBody(req.body)
 
