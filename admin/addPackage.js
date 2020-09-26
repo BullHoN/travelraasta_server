@@ -8,7 +8,13 @@ const PackageItem = require('../models/PackageItem')
 storage = multer.diskStorage({
     destination: './build/images',
     filename: function(req, file, cb) {
-      return cb(null,file.originalname);
+    	let path = __dirname + "/build/images/" + file.originalName;
+    	path = path.replace('\admin','')
+
+    	if (fs.existsSync(path)) {
+    		fs.unlinkSync(path)
+		}
+      	return cb(null,file.originalname);
     }
 });
 
@@ -18,14 +24,49 @@ multerMiddleWare = multer({
 
 router.post('/',multerMiddleWare,(req,res)=>{
     let packageData = JSON.parse(req.body.data)
-    console.log(packageData);
 
-    let date = getDate(packageData['expriredAt'])
-    console.log(date)
+    let expriredAt = getDate(packageData['expriredAt'])
+    // console.log(req.files);
 
-    for(let i=0;i<req.files.length;i++){
-    	changeFileNames(req.files[i]['filename'],packageData['imageUrls'][i])
-    }
+    PackageItem.findOne({packageGroupId: packageData['packageGroupId'], name: packageData['name']}).then((item)=>{
+    	if(item){
+    		item.price = packageData['price']
+    		item.packageGroupId = packageData['packageGroupId']
+    		item.priceType = packageData['priceType']
+    		item.scheduleString = packageData['scheduleString']
+    		item.overview = packageData['overview']
+    		item.days = packageData['days']
+    		item.night = packageData['night']
+    		item.features = packageData['features']
+    		item.imageUrls = packageData['imageUrls']
+    		item.itenary = packageData['itenary']
+    		// item.expriredAt = expriredAt
+    		item.inclusions = packageData['inclusions']
+
+    		item.save().then(()=>{
+    			console.log('package data updated...')
+    		})
+
+    	}else {
+			let packageItem = new PackageItem({
+				packageGroupId: packageData['packageGroupId'],
+				name: packageData['name'],
+				price: packageData['price'],
+				priceType: packageData['priceType'],
+				scheduleString: packageData['scheduleString'],
+				overview: packageData['overview'],
+				days: packageData['days'],
+				night: packageData['night'],
+				features: packageData['features'],
+				imageUrls: packageData['imageUrls'],
+				itenary: packageData['itenary'],
+				expriredAt: expriredAt,
+				inclusions: packageData['inclusions']
+			}).save().then(()=>{
+				console.log('new package saved...');
+			})
+    	}
+    })
 
     res.json({status:true});
 })
@@ -34,7 +75,7 @@ function getDate(dateString) {
 
 	let return_date = new Date()
 
-	//23-8-2020 3:52
+	//23-8-2020
 	let split_date = dateString.split(' ');
 	let date = parseInt(split_date[0].split('-')[0]);
 	let month = parseInt(split_date[0].split('-')[1]);

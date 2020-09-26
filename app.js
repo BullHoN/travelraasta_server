@@ -77,8 +77,15 @@ app.use(express.static('build'))
 app.use('/services',require('./services/serviceRoute'));
 app.use('/admin/addPackage',require('./admin/addPackage'))
 app.use('/admin/register',require('./admin/registerAdmin'));
+app.use('/admin/editPackage',require('./admin/editPackages'))
+app.use('/admin/deletePackage',require('./admin/deletePackage'))
 app.use('/pac',require('./packageRoutes/getPackages'));
 app.use('/single_pac',require('./packageRoutes/getSinglePackage'));
+// app.use('/package_Notification',require('./packageRoutes/packageNotification'))
+app.use('/displayImages',require('./display_routes/displayImages'))
+app.use('/displayPackages',require('./display_routes/displayPackages'))
+
+
 
 app.get('*',(req,res)=>{
     res.sendFile(path.join(__dirname + '/build/index.html'))
