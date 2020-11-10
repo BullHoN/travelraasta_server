@@ -17,7 +17,7 @@ admin.initializeApp({
 
 
 // mongoDB connect
-mongoose.connect('mongodb+srv://admin:Mw6smfISo3Ity3iC@travelraasta.nqh1c.mongodb.net/travelraasta?retryWrites=true&w=majority',{ useNewUrlParser: true,useUnifiedTopology: true })
+mongoose.connect('',{ useNewUrlParser: true,useUnifiedTopology: true })
 .then(()=>{
     console.log('connected to mongodb');
 }).catch((err)=>{
